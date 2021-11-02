@@ -1,0 +1,93 @@
+class Grafite {
+    calibre: number;
+    dureza: string;
+    tamanho: number;
+    constructor(calibre: number, dureza: string, tamanho: number) {
+        this.calibre = calibre;
+        this.dureza = dureza;
+        this.tamanho = tamanho;
+    }
+
+    gastoPorFolha(): number {
+        if (this.dureza === 'HB')
+            return 1
+        if (this.dureza === '2B')
+            return 2
+        if (this.dureza === '4B')
+            return 4
+        if (this.dureza === '6B')
+            return 6
+        return 0;
+    }
+
+    toString(): string {
+        return `Grafite ${this.calibre}:${this.dureza}:${this.tamanho}`;
+    }
+}
+
+class Lapiseira {
+    private grafites: Grafite [] = [];
+    calibre: number;
+    limite: number;
+
+    constructor(calibre: number, limite: number) { 
+        this.calibre = calibre;
+        this.limite = limite;
+    }
+
+    setGrafite(grafite: Grafite): boolean {
+        if (this.grafites.length === this.limite) {
+            console.log("A lapiseira está cheia!");
+            return false;
+        }
+        if (grafite.calibre != this.calibre) {
+            console.log("O grafite não é compatível com a lapiseira");
+            return false;
+        }
+
+        this.grafites.push (grafite);
+        return true;
+    }
+
+    getGrafite (): Grafite [] {
+       return this.grafites;
+    }
+
+    removerGrafite(): Grafite | null | undefined {
+        if (this.grafites.length == 0) {
+            console.log("A lapiseira não possui um grafite");
+            return null;
+        }
+        
+        let grafiteSaiu: Grafite = this.grafites.shift();
+        console.log ("Grafite removido")
+        return grafiteSaiu;
+    }
+
+    escrever (folhas: number): boolean {
+        for (let i = 0; i < folhas; i++){
+           if (this.grafites.length == 0){
+               console.log ("Não tem nada aqui!")
+               return false;
+           }
+
+           let tamanhoDaPonta = this.grafites[0].tamanho
+           let gastoPorFolhaDaPonta = this.grafites[0].gastoPorFolha ()
+           
+           tamanhoDaPonta -= gastoPorFolhaDaPonta
+           if(tamanhoDaPonta === 0.1){
+            console.log ("trocar de grafite");
+               this.grafites.shift();
+           }
+       } 
+    }
+}
+
+let lapiseira: Lapiseira = new Lapiseira (1, 5); 
+lapiseira.setGrafite (new Grafite (1, "2B", 1)); 
+lapiseira.setGrafite (new Grafite (1, "HB", 50));
+console.log(lapiseira.removerGrafite ());
+lapiseira.setGrafite (new Grafite (1, "HB", 50)); 
+lapiseira.setGrafite (new Grafite (1, "4B", 80)); 
+console.log (lapiseira.getGrafite());
+console.log(lapiseira.removerGrafite ());
