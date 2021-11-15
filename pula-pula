@@ -1,0 +1,74 @@
+class Kid {
+    name: string;
+    age: number;
+
+    constructor(name: string, age: number) {
+        this.name = name;
+        this.age = age;
+    }
+    toString() {
+        return `${this.name} tem ${this.age}`;
+    }
+}
+
+class Trampoline {
+    playing: Array<Kid>;
+    waiting: Array<Kid>;
+
+    constructor() {
+        this.playing = [];
+        this.waiting = [];
+    }
+
+    arrive(kid: Kid) {
+        this.waiting.push(kid);
+    }
+
+    in() {
+        let kid: Kid = this.waiting.shift();
+        this.playing.push(kid);
+    }
+
+    out() {
+        let kid = this.playing.shift();
+        return kid;
+    }
+
+    remove(name: string) {
+        for (let i = 0; i < this.playing.length; i++) {
+            if (this.playing[i].name == name) {
+                this.playing.splice(i, 1);
+            }
+        }
+
+        for (let i = 0; i < this.waiting.length; i++) {
+            if (this.waiting[i].name == name) {
+                this.waiting.splice(i, 1);
+            }
+        }
+    }
+}
+
+let trampoline = new Trampoline();
+
+trampoline.arrive(new Kid("mario", 5));
+trampoline.arrive(new Kid("livia", 4));
+trampoline.arrive(new Kid("luana", 3));
+console.log(trampoline);
+// luana:3 livia:4 mario:5 => [ ]
+
+//kids entrando
+trampoline.in();
+console.log(trampoline);
+// luana:3 livia:4 => [ mario:5 ]
+trampoline.in();
+console.log(trampoline);
+// luana:3 => [ livia:4 mario:5 ]
+
+//kids saindo
+trampoline.out();
+console.log(trampoline);
+// mario:5 luana:3 => [ livia:4 ]
+
+trampoline.remove("mario")
+console.log(trampoline)
