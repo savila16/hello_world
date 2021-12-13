@@ -1,0 +1,65 @@
+class Client {
+    id: string;
+    fone: string;
+
+    constructor(id: string, fone: string) {
+        this.id = id;
+        this.fone = fone;
+    }
+    toString() {
+        return `o cliente ${this.id} cujo telefone é ${this.fone} fez uma reserva`;
+    }
+}
+
+class Sala {
+    cadeiras: Map<number, Client | null> = new Map;
+
+    constructor(capacidade: number) {
+        for (let i = 0; i < capacidade; i++) {
+            this.cadeiras.set(i, null)
+        }
+    }
+
+    toString() {
+        let saida = '[ '
+        for (let client of this.cadeiras.values()) {
+            if (client == null) {
+                saida += '- '
+            } else {
+                saida += client.id + ' ';
+            }
+        }
+        return saida += ']';
+    }
+
+    reservar(id: string, fone: string, indice: number): boolean {
+        let cliente = new Client(id, fone);
+
+        if (this.cadeiras != null) {
+            console.log("essa cadeira já está ocupada!");
+            return false;
+        }
+        for (let i = 0; i < this.cadeiras.length; i++) {
+            if (this.cadeiras[i] != null && this.cadeiras[i].id == id) {
+                console.log("essa pessoa já está na sala!")
+                return false;
+            }
+        }
+        this.cadeiras = cliente;
+        return true;
+    }
+
+    cancelar(id: string): boolean {
+        for (let i = 0; i < this.cadeiras.length; i++) {
+            if (this.cadeiras[i] != null) {
+                if (this.cadeiras[i].id == id) {
+                    this.cadeiras[i] = null;
+                    console.log("cancelar reserva")
+                    return true;
+                }
+            }
+        }
+        console.log("a pessoa não está aqui!");
+        return false;
+    }
+}
