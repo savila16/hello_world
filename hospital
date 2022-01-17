@@ -1,0 +1,193 @@
+class Paciente {
+    private nome: string;
+    private diagnostico: string;
+    private sender: string = "";
+    private medicos: Map<string, Medico>;
+
+    constructor(nome: string) {
+        this.nome = nome;
+        this.diagnostico = "";
+        this.sender = "";
+        this.medicos = new Map<string, Medico>();
+    }
+
+    getNome(): string {
+        return this.nome;
+    }
+
+    getDiagnostico(): string {
+        return this.diagnostico;
+    }
+
+    getMedico(): Medico[] {
+        return [...this.medicos.values()];
+    }
+
+    addMedico(medico: Medico): void {
+        if (this.medicos.has(medico.getEspecialidade()))
+            return
+        this.medicos.set(medico.getEspecialidade(), medico);
+        medico.addPaciente(this);
+    }
+
+    removerMedico(especialidade: string) {
+        let medico: Medico | undefined = this.medicos.get(especialidade);
+
+        if (medico !== undefined) {
+            this.medicos.delete(especialidade);
+            medico.removerPaciente(this.nome);
+
+        }
+    }
+
+    public toString(): string {
+        let medicos = this.medicos.keys();
+        return this.nome + " [" + [...medicos].join(", ") + "]";
+    }
+}
+
+class Medico {
+    private nome: string;
+    private especialidade: string;
+    private sender: string = "";
+    private pacientes: Map<string, Paciente>;
+
+    constructor(nome: string, especialidade: string) {
+        this.nome = nome;
+        this.especialidade = especialidade;
+        this.sender = "";
+        this.pacientes = new Map<string, Paciente>();
+    }
+    public getNome(): string {
+        return this.nome;
+    }
+
+    getEspecialidade(): string {
+        return this.especialidade;
+    }
+
+    getSender(): string {
+        return this.sender;
+    }
+
+    getPacientes(): Paciente[] {
+        return [...this.pacientes.values()];
+    }
+
+    addPaciente(paciente: Paciente): void {
+        if (this.pacientes.has(paciente.getNome()))
+            return
+        this.pacientes.set(paciente.getNome(), paciente);
+        paciente.addMedico(this)
+    }
+
+    removerPaciente(nome: string) {
+        let paciente: Paciente | undefined = this.pacientes.get(nome);
+
+        if (paciente !== undefined) {
+            this.pacientes.delete(nome);
+            paciente.removerMedico(this.especialidade);
+        }
+    }
+
+    public toString(): string {
+        let paciente = this.pacientes.keys();
+        return this.nome + " [" + [...paciente].join(", ") + "]";
+    }
+}
+
+class Hospital {
+
+    private medicos: Map<string, Medico>
+    private pacientes: Map<string, Paciente>
+
+    constructor() {
+        this.medicos = new Map<string, Medico>()
+        this.pacientes = new Map<string, Paciente>()
+    }
+
+    addPaciente(paciente: Paciente): void {
+        if (!this.pacientes.has(paciente.getNome())) {
+            this.pacientes.set(paciente.getNome(), paciente)
+        }
+    }
+
+    addMedico(medico: Medico): void {
+        if (!this.medicos.has(medico.getNome())) {
+            this.medicos.set(medico.getNome(), medico);
+        }
+    }
+
+    getPaciente(nome: string): Paciente {
+        let paciente: undefined | Paciente = this.pacientes.get(nome);
+        if (paciente === undefined)
+            throw new Error("Paciente não encontrado");
+        return paciente;
+    }
+
+    getMedico(nome: string): Medico {
+        let medico: undefined | Medico = this.medicos.get(nome);
+        if (medico === undefined)
+            throw new Error("Paciente não encontrado");
+        return medico;
+    }
+
+    removePaciente(nome: string) {
+        let paciente: Paciente = this.getPaciente(nome);
+
+        for (let medico of paciente.getMedico()) {
+            medico.removerPaciente(paciente.getNome())
+        }
+        this.pacientes.delete(paciente.getNome());
+    }
+
+    removeMedico(nome: string) {
+        let medico: Medico = this.getMedico(nome);
+
+        for (let paciente of medico.getPacientes()) {
+            paciente.removerMedico(medico.getEspecialidade())
+        }
+        this.medicos.delete(nome);
+    }
+
+    vincular(nomePaciente: string, nomeMedico: string) {
+        let paciente: Paciente = this.getPaciente(nomePaciente);
+        let medico: Medico = this.getMedico(nomeMedico);
+
+        paciente.addMedico(medico);
+    }
+
+    desvincular(nomePaciente: string, nomeMedico: string) {
+        let paciente: Paciente = this.getPaciente(nomePaciente);
+        let medico: Medico = this.getMedico(nomeMedico);
+
+        paciente.removerMedico(medico.getEspecialidade())
+    }
+
+    public toString(): string {
+        let pacientes = [...this.pacientes.values()].map(a => a.toString());
+        let medicos = [...this.medicos.values()].map(d => d.toString());
+        return "-- pacientes:\n" + pacientes.join("\n") + "\n-- Médicos:\n" + medicos.join("\n");
+    }
+}
+
+let hospital = new Hospital();
+
+hospital.addPaciente(new Paciente("Yuri"));
+hospital.addPaciente(new Paciente("João"));
+hospital.addPaciente(new Paciente("Sara"));
+
+hospital.addMedico(new Medico("Naty", "Psicóloga"));
+hospital.addMedico(new Medico("Edoardo", "Fisioterapeuta"));
+hospital.addMedico(new Medico("Savila", "Nutricionista"));
+
+hospital.vincular("Yuri", "Naty");
+hospital.vincular("Yuri", "Savila");
+hospital.vincular("João", "Edoardo");
+hospital.vincular("Sara", "Naty");
+
+console.log(hospital.toString());
+
+hospital.removeMedico("Edoardo");
+
+console.log(hospital.toString());
