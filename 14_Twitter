@@ -1,0 +1,206 @@
+class User {
+    username: string;
+    inbox: Inbox;
+    followers: Map<string, User>;
+    following: Map<string, User>;
+
+    constructor(username: string) {
+        this.username = username;
+        this.inbox = new Inbox; 
+        this.followers = new Map<string, User>()
+        this.following = new Map<string, User>()
+    }
+
+    toString(): string {
+        return `${this.username},seguidores: ${this.followers}, seguindo: ${this.following}`;
+    }
+
+    follow (other: User){
+       if (this.username == this.username){
+           console.log ("O usuário não pode seguir a si mesmo!")
+       } if (this.following.has (other.username) == false) {
+            this.following.set (other.username, other)
+            this.followers.set (this.username, other)
+            console.log ("você começou a seguir")
+       } else {
+           console.log ("você já segue esse usuário!")
+       }
+    }
+
+    getInbox () {
+
+    }
+
+    sendTweet (tw: Tweet){
+        for (let i =0; i < this.followers; i++){
+            this.storeInTimeline (tw);
+        }
+    }
+
+   unfollow (other: string){
+
+   }
+
+   like (idTw: number){
+
+   }
+
+   unfollowAll (){
+
+   }
+
+   rejectAll (){
+
+   }
+}
+
+class Controller {
+    nextTweetId: number;
+    users: Map<string, User>
+    tweets: Map<string, Tweet>
+
+    constructor() {
+        this.nextTweetId = 0;
+        this.users = new Map<string, User>();
+        this.tweets = new Map<string, Tweet>();
+    }
+
+    addUser(username: string) {   
+           if (this.users.has (username) == false) {
+               this.users.get (username);
+           } else {
+               console.log ("esse usuário já existe e não pode ser adicionado!")
+           }
+           
+        }
+    
+    toString() {
+
+    }
+
+    createTweet (sender: string, msg: string): Tweet {
+      let tweet = new Tweet (this.nextTweetId, sender, msg);
+      this.tweets.set (sender, tweet)
+      this.nextTweetId ++;     
+    }
+
+    public getUser (username: string){
+
+
+    }
+
+   sendTweet (username: string, msg: string){
+      if (this.users.has (username) == false) {
+          console.log ("esse usuário não existe"); 
+          } else {
+           this.createTweet (username, msg);
+           console.log ("o usuário enviou uma mensagem")
+          }
+   }
+
+   sendRt (username: string, twId: number, rtMsg: string){
+
+   }
+
+   rmUser (username:string){
+
+   }
+
+}
+
+class Inbox {
+    timeline: Map <number, Tweet>
+    myTweets: Map <number, Tweet>
+
+
+    constructor() {
+        this.timeline = new Map<number, Tweet>();
+        this.myTweets = new Map<number, Tweet>();
+    }
+
+   storeInTimeline (tweet: Tweet){
+      this.timeline.get (tweet)
+   }
+
+   getTimeLine (){
+     
+   }
+
+   toString (){
+
+   }
+
+    getTweet (id: number){
+
+    }
+
+    rmMsgsFrom (username: string){
+
+    }
+
+
+    storeInMyTweets (tweet: Tweet){
+
+    }
+
+    getMyTweets (){
+
+    }
+
+
+}
+
+class Tweet {
+    
+    id: number;
+    username: string;
+    msg: string;
+    rt: Tweet;
+
+    constructor(id: number, username: string, msg: string) {
+        this.id = id;
+        this.username = username;
+        this.msg = msg;
+        this.rt = Tweet;
+    }
+
+    getId (){
+        
+    }
+
+   getSender (){
+
+   }
+
+   getMsg (){
+
+   }
+
+   toString (){
+
+   }
+
+   like (username: string){
+
+   }
+
+   getLikes (){
+
+   }
+
+   setRt (){
+
+   }
+
+   deleted () {
+
+   }
+
+   setDeleted (){
+
+   }
+
+   isDeleted (){
+
+   }
+}
