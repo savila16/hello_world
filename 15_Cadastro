@@ -1,0 +1,216 @@
+abstract class Account {
+    private balance: number;
+    private clientId: string;
+    private id: number;
+    types: string;
+
+    constructor(balance: number, clientId: string, id: number, types: string) {
+        this.balance = balance;
+        this.clientId = clientId;
+        this.id = id;
+        this.types = types;
+    }
+
+    public deposit(value: number): void {
+       this.balance += value;
+     }
+
+     monthlyUpdate (){
+       
+     }
+
+    public transfer(other: Account, value: number): void {
+        if (this.balance < value){
+            console.log ("A tranferência não pode ser feita, pois o saldo é insuficiente!")
+        } else {
+       this.balance -= value
+       other.balance += value 
+    }
+    }
+    public withDraw(value: number) {
+        if (this.balance > value) {
+            console.log("saldo insuficiente!");
+        } else {
+            this.balance =- value;
+            console.log("saque autorizado!");
+        }
+    }
+
+    public toString(): string {
+        return `Usuário: ${this.clientId} \n saldo: ${this.getBalance()} \n tipo de conta: ${this.types}`
+    }
+
+    getBalance(): number {
+        return this.balance;
+    }
+
+    getClientId(): string {
+        return this.clientId;
+    }
+
+    getId(): number {
+        return this.id;
+    }
+
+    getTypes(): string {
+        return this.types;
+    }
+}
+
+class Client {
+   accounts: Array<Account> = [];
+   clientId: string;
+
+    constructor(clientId: string) {
+        this.clientId = clientId;
+        this.accounts = new Array <Account> ();
+    }
+
+    client(clientId: string) {
+        let cliente = clientId;
+        return cliente;
+    }
+
+    addAccount(account: Account) {
+        if (this.accounts == null){
+            console.log ("essa conta não pode ser adicionada, pois ela já existe")
+        } else {
+           this.accounts.push(account);
+           console.log ("conta adicionada com sucesso!")
+        }
+    }
+
+    toString(): string {
+        return `Cliente: ${this.clientId} \n contas vinculadas: ${this.accounts}`
+
+    }
+
+    getAccounts(): Array<Account> {
+        return this.accounts;
+    }
+
+    getClientId(): string {
+        return this.clientId;
+    }
+
+    setAccounts(num_accounts: Array<Account>) {
+        this.accounts = num_accounts;
+    }
+
+    setClientId(clientId: string) {
+        this.clientId = clientId;
+    }
+}
+
+class CheckingAccount extends Account {
+
+    constructor(balance: number, id: number, idClient: string) {
+        super(balance, "CC", id, idClient);
+    }
+
+    monthlyUpdate() {
+        this.getBalance() - 20;
+    }
+
+    toString(): string {
+        return `O id: ${this.getId} coincide com o id do cliente: ${this.getClientId}`;
+    }
+}
+
+class SavingsAccount extends Account {
+
+    constructor(balance: number, id: number, idClient: string) {
+        super(balance, "CP", id, idClient);
+    }
+
+    monthlyUpdate(): boolean {
+      this.getBalance () * 0.01;
+        return true;
+    }
+
+    toString() {
+        return `A conta ${this.getId} do ${this.getClientId} foi salva com sucesso!`
+    }
+}
+
+class BankAgency {
+    accounts: Map<number, Account>;
+    clients: Map<string, Client>
+    nextAccountId: number;
+
+    constructor () {
+        this.accounts = new Map<number, Account>();
+        this.clients = new Map<string, Client>();
+        this.nextAccountId = 0;
+    }
+
+    addClient(clientId: string) {
+        let saldo = 10;
+        if (this.clients.has(clientId) == true) {
+            console.log("esse cliente já existe e não pode ser adicionado novamente")
+        } else {
+            let cliente = new Client (clientId)
+            let conta1 = new SavingsAccount (saldo, this.nextAccountId, clientId);
+            this.nextAccountId += 1;
+            let conta2 = new CheckingAccount (saldo, this.nextAccountId, clientId);
+            this.nextAccountId += 1;
+            this.accounts.set (conta1.getId (), conta1)
+            this.accounts.set (conta2.getId (), conta2)
+            this.clients.set (clientId, cliente);
+            cliente.addAccount (conta1);
+            cliente.addAccount (conta2);
+        } 
+    }
+
+    deposit(idConta: number, value: number) {
+        if (this.accounts.has(idConta) == false) {
+            console.log("a conta não é compatível, o depósito não pode ser feito!")
+        } else {
+           this.nextAccountId  += value
+            console.log("depósito efeutado com sucesso!")
+      }
+    }
+
+    monthlyUpdate () {
+
+    for (let i= 0; i < this.accounts.value; i++){
+        this.monthlyUpdate;
+    }
+    }
+
+    transfer(contaDe: number, contaPara: number, value: number) {
+       if (this.accounts == null && contaDe == contaPara){
+           console.log ("essa transferência não pode ser feita, pois a conta não existe ou não pode transferir pra si mesma!")
+       } else if (contaDe += value){
+         console.log ("transferência feita com sucesso!")
+       }
+    }
+
+    withDraw(idConta: number, value: number) {
+        if (this.accounts.has(idConta) == false) {
+            console.log("os dados dessa conta estão errados, o saque não pode ser efetuado!")
+        } else {
+            this.nextAccountId -= value;
+            console.log("saque autorizado!")
+            
+        }
+    }
+    toString(): string {
+        return `Número de contas: ${this.accounts.values} \n Número de clientes: ${this.clients.values}`
+    }
+}
+
+let banco: BankAgency = new BankAgency ();
+
+banco.addClient ("Savinha");
+banco.addClient ("Jade");
+banco.addClient ("João")
+banco.addClient ("João") //erro
+
+banco.deposit (2, 20);
+banco.deposit (1, 100);
+
+banco.transfer (1, 2, 20)
+
+banco.withDraw (2, 10);
+banco.withDraw (1, 50);
