@@ -1,0 +1,6 @@
+O props drilling ocorre quando há a transferência de informação entre várias camadas dos componentes via props,
+e seu principal problema é devido a limitação que se tem ao compartilhar essas informações, pois como ele vai 
+passando de um componente para outro, não pode "pular" componentes na ordem da hierarquia, e alguns dados em alguns
+componentes podem ser considerados irrelevantes. Um exemplo seria se tivéssemos os componentes pai, filho e avô.
+Caso eu quisesse passar uma informação via props do pai para o avô diretamente, não seria possível, pois antes ele teria
+que seguir a ordem da hierarquia pai - filho - avô. 
